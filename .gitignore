@@ -1,0 +1,9 @@
+# .gitignore
+.env
+.env.*            # e.g., .env.local, .env.dev
+__pycache__/
+*.pyc
+exports/
+*.sqlite
+*.db
+.DS_Store

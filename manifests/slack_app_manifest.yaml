@@ -1,0 +1,36 @@
+display_information:
+  name: DBChat
+  description: "Ask Slack to query your DB with a local LLM. Returns tables, CSVs, and plots."
+  background_color: "#2E4057"
+
+features:
+  bot_user:
+    display_name: DBChat
+    always_online: true
+  slash_commands:
+    - command: /dd
+      url: https://YOUR-NGROK-DOMAIN/slack/sqlquery
+      description: Ask a data question; bot generates SQL and returns results
+      usage_hint: "top 10 customers by spend <2>"
+      should_escape: false
+    - command: /help
+      url: https://YOUR-NGROK-DOMAIN/slack/help
+      description: Help for DBChat
+      should_escape: false
+oauth_config:
+  scopes:
+    bot:
+      - chat:write
+      - chat:write.public
+      - files:write
+      - commands
+settings:
+  event_subscriptions:
+    request_url: https://YOUR-NGROK-DOMAIN/slack/events   # not used now; safe placeholder
+    bot_events: []
+  interactivity:
+    is_enabled: true
+    request_url: https://YOUR-NGROK-DOMAIN/slack/interactions
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
