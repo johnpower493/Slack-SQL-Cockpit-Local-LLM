@@ -13,10 +13,15 @@ Ask questions in Slack → get **safe, read-only SQL** (SQLite) via **Ollama** (
   - Executes against **Chinook** (or your DB)
   - Replies with a paginated table
   - Buttons: **Export CSV**, **Plot Data** (choose X/Y, uploads chart)
+
+### Query examples:
 ![Query step 1](examples/query1.png)
 ![Query step 2](examples/query2.png)
+### Guard rails example:
 ![Guardrails example](examples/guardrails.png)
+### Plotting xample:
 ![Plot example](examples/plot.png)
+
 ---
 
 ## Quickstart
