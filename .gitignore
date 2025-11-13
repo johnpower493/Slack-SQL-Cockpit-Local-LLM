@@ -4,6 +4,8 @@
 __pycache__/
 *.pyc
 exports/
+archive/
 *.sqlite
 *.db
+*.exe
 .DS_Store

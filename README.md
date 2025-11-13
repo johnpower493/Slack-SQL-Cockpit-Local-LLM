@@ -1,4 +1,4 @@
-# Data Distillery Slack SQL Cockpit with Local LLM
+# Slack SQL Cockpit - Release 1
 
 Ask questions in Slack → get **safe, read-only SQL** (SQLite) via **Ollama** (IBM Granite Micro or any local model), plus **paginated results**, **CSV export**, and **inline plots** — no data leaves your machine.
 
@@ -16,8 +16,8 @@ Ask questions in Slack → get **safe, read-only SQL** (SQLite) via **Ollama** (
 
 ### Query examples:
 ![Query_step_3](examples/query3.gif)
+### Simply use /dd 'your data question'
 ![Query step 1](examples/query1.png)
-![Query step 2](examples/query2.png)
 ### Guard rails example:
 ![Guardrails example](examples/guardrails.png)
 ### Plotting xample:
