@@ -1,6 +1,15 @@
 # CircularQuery - Release 1
 ## Your Local AI data analyst - inside Slack
-![Logo](examples/logo-small.png) Ask questions in Slack → get **safe, read-only SQL** (SQLite) via **Ollama** (IBM Granite Micro or any local model), plus **paginated results**, **CSV export**, and **inline plots** — no data leaves your machine.
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+  <img src="examples/logo-small.png" alt="CircularQuery logo" width="120">
+  <p style="margin: 0;">
+    Ask questions in Slack → get <strong>safe, read-only SQL</strong> (SQLite) via
+    <strong>Ollama</strong> (IBM Granite Micro or any local model), plus
+    <strong>paginated results</strong>, <strong>CSV export</strong>, and
+    <strong>inline plots</strong> — no data leaves your machine.
+  </p>
+</div>
+
 
 > Works with `/dd` (CircularQuery SQL assistant), CSV exports, and "Plot Data" interactivity.
 
