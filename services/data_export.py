@@ -115,7 +115,7 @@ class DataExportService:
             plt.tight_layout()
             
             # Save plot
-            plot_filename = f"plot_{user_id}_{int(time.time())}.png"
+            plot_filename = f"bar_plot_{user_id}_{int(time.time())}.png"
             plot_filepath = os.path.join(config.EXPORTS_DIR, plot_filename)
             plt.savefig(plot_filepath)
             plt.close()
@@ -123,7 +123,84 @@ class DataExportService:
             return plot_filepath
             
         except Exception as e:
-            print(f"Error creating plot: {e}")
+            print(f"Error creating bar plot: {e}")
+            plt.close()  # Ensure plot is closed even on error
+            return None
+    
+    @staticmethod
+    def create_line_plot(csv_filepath: str, x_column: str, y_column: str, 
+                        user_id: str) -> Optional[str]:
+        """
+        Create a line plot from CSV data and save to file.
+        
+        Args:
+            csv_filepath: Path to CSV file
+            x_column: Column name for X-axis
+            y_column: Column name for Y-axis
+            user_id: User ID for unique filename
+            
+        Returns:
+            Path to saved plot image or None if failed
+        """
+        try:
+            df = pd.read_csv(csv_filepath)
+            
+            if df.empty or x_column not in df.columns or y_column not in df.columns:
+                print(f"Invalid columns or empty data: {x_column}, {y_column}")
+                return None
+            
+            # Sort by X column for proper line continuity
+            df = df.sort_values(by=x_column)
+            
+            # Aggregate duplicate X values by averaging Y values (more appropriate for line plots)
+            if df.duplicated(subset=[x_column]).any():
+                df = df.groupby(x_column, dropna=False)[y_column].mean().reset_index()
+            
+            # Convert X column to appropriate type for plotting
+            x_data = df[x_column]
+            y_data = pd.to_numeric(df[y_column], errors='coerce')
+            
+            # Try to parse X as datetime for better time series plots
+            try:
+                x_data_parsed = pd.to_datetime(x_data, infer_datetime_format=True)
+                x_for_plot = x_data_parsed
+            except (ValueError, TypeError):
+                # If not datetime, try numeric
+                try:
+                    x_for_plot = pd.to_numeric(x_data, errors='raise')
+                except (ValueError, TypeError):
+                    # Use as string with numeric indices
+                    x_for_plot = range(len(x_data))
+            
+            # Create plot
+            plt.figure(figsize=(10, 6))
+            plt.plot(x_for_plot, y_data, marker='o', linewidth=2, markersize=4)
+            
+            # Format X-axis based on data type
+            if isinstance(x_for_plot, pd.DatetimeIndex) or hasattr(x_for_plot, 'dt'):
+                plt.xticks(rotation=45, ha='right')
+            elif x_for_plot is not range(len(x_data)):
+                plt.xticks(rotation=45, ha='right')
+            else:
+                # For categorical data, use original labels
+                plt.xticks(range(len(x_data)), x_data.astype(str), rotation=45, ha='right')
+            
+            plt.xlabel(x_column)
+            plt.ylabel(y_column)
+            plt.title(f"{y_column} over {x_column}")
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+            
+            # Save plot
+            plot_filename = f"line_plot_{user_id}_{int(time.time())}.png"
+            plot_filepath = os.path.join(config.EXPORTS_DIR, plot_filename)
+            plt.savefig(plot_filepath)
+            plt.close()
+            
+            return plot_filepath
+            
+        except Exception as e:
+            print(f"Error creating line plot: {e}")
             plt.close()  # Ensure plot is closed even on error
             return None
 
@@ -148,6 +225,11 @@ class SessionManager:
             user_data.get("Y"),
             user_data.get("CSV")
         )
+    
+    def get_user_selection(self, user_id: str, selection_type: str) -> Optional[str]:
+        """Get a specific user selection."""
+        user_data = self._sessions.get(user_id, {})
+        return user_data.get(selection_type)
     
     def clear_user_session(self, user_id: str):
         """Clear all session data for a user."""

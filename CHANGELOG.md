@@ -11,18 +11,39 @@
   - Includes row count footer and professional styling
   - Handles edge cases (empty data, failed generation) gracefully
 
+- **📈 Line Plot Support**: Enhanced visualization capabilities
+  - Added "📈 Line Plot" button alongside existing bar plots
+  - Intelligent data type detection (datetime, numeric, categorical)
+  - Automatic data sorting for proper line continuity
+  - Grid lines and markers for better readability
+  - Optimized for time series and trend analysis
+  - Uses averaging for duplicate X values (vs summing for bar plots)
+
 ### Enhanced
-- Updated help command to include Insights feature documentation
+- **Improved Plot Experience**: Split single "Plot Data" into specific plot types
+  - "📊 Bar Plot" for categorical comparisons
+  - "📈 Line Plot" for trends and time series
+  - Dynamic button text shows selected plot type
+  - Session management tracks plot type selection
+- **Better Slack Formatting**: Fixed Markdown rendering in insights
+  - Converts standard Markdown to Slack's mrkdwn format
+  - Proper bold (`**text**` → `*text*`) and italic formatting
+  - Clean bullet points and headers
+  - Enhanced LLM prompts for better formatted output
+- Updated help command to include all new features
 - Enhanced LLM service with `generate_insights()` method
 - Improved user experience with emoji indicators and clear messaging
 - Added comprehensive error handling for insights generation workflow
 
 ### Technical Details
-- New endpoint handler for `insights` action in Slack interactions
+- New `create_line_plot()` method in DataExportService
+- Enhanced SessionManager with individual selection retrieval
+- New endpoint handlers for `plot_bar` and `plot_line` actions
 - Background processing for insights to prevent timeout issues
 - Sample data limiting (first 10 rows) to optimize token usage
 - Schema context inclusion for better LLM understanding
 - Reuses existing SQL queries when possible for efficiency
+- Markdown-to-Slack formatting converter function
 
 ---
 

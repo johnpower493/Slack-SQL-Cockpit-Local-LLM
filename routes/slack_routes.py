@@ -119,14 +119,15 @@ def handle_slack_interactions():
                 ).start()
                 return jsonify({"text": "Exporting CSV..."}), 200
                 
-            elif action.action_id == 'plot':
-                # Handle plot preparation
+            elif action.action_id in ['plot_bar', 'plot_line']:
+                # Handle plot preparation with plot type
+                plot_type = 'bar' if action.action_id == 'plot_bar' else 'line'
                 threading.Thread(
                     target=_prepare_plot,
-                    args=(action.value, response_url, payload),
+                    args=(action.value, response_url, payload, plot_type),
                     daemon=True
                 ).start()
-                return jsonify({"text": "Preparing plot options..."}), 200
+                return jsonify({"text": f"Preparing {plot_type} plot options..."}), 200
                 
             elif action.action_id == 'insights':
                 # Handle insights generation
@@ -196,8 +197,8 @@ def help_command():
                         "short": False
                     },
                     {
-                        "title": "Plot",
-                        "value": "Use *Plot Data* → choose axes → *Generate Plot* (uploads image)",
+                        "title": "Plots",
+                        "value": "Use *📊 Bar Plot* or *📈 Line Plot* → choose axes → *Generate Plot* (uploads image)",
                         "short": False
                     },
                     {
@@ -272,22 +273,25 @@ def _process_sql_query(query_request: QueryRequest):
         # Create action buttons
         buttons = [
             create_slack_button("export_csv", "Export as CSV", query_request.question),
-            create_slack_button("plot", "Bar Plot", query_request.question),
+            create_slack_button("plot_bar", "📊 Bar Plot", query_request.question),
+            create_slack_button("plot_line", "📈 Line Plot", query_request.question),
             create_slack_button("insights", "🔍 Insights", query_request.question, "default"),
         ]
         
         # Add pagination buttons if needed
         if pagination["total_pages"] > 1:
-            buttons.append(create_slack_button(
-                "previous", 
-                f"Previous ({pagination['previous_page']})", 
-                f"{pagination['previous_page']}|{query_request.question}"
-            ))
-            buttons.append(create_slack_button(
-                "next", 
-                f"Next ({pagination['next_page']})", 
-                f"{pagination['next_page']}|{query_request.question}"
-            ))
+            if pagination["has_previous"]:
+                buttons.append(create_slack_button(
+                    "previous", 
+                    f"Previous ({pagination['previous_page']})", 
+                    f"{pagination['previous_page']}|{query_request.question}"
+                ))
+            if pagination["has_next"]:
+                buttons.append(create_slack_button(
+                    "next", 
+                    f"Next ({pagination['next_page']})", 
+                    f"{pagination['next_page']}|{query_request.question}"
+                ))
         
         # Create response message
         attachment = create_slack_attachment_with_buttons("Navigate or export:", buttons)
@@ -381,7 +385,7 @@ def _export_csv(query_text: str, response_url: str, payload: Dict[str, Any]):
         })
 
 
-def _prepare_plot(query_text: str, response_url: str, payload: Dict[str, Any]):
+def _prepare_plot(query_text: str, response_url: str, payload: Dict[str, Any], plot_type: str = 'bar'):
     """Prepare plot options in background thread."""
     import requests
     
@@ -418,6 +422,7 @@ def _prepare_plot(query_text: str, response_url: str, payload: Dict[str, Any]):
         
         csv_filepath = DataExportService.save_csv_to_storage(csv_content, query_text)
         session_manager.store_user_selection(user_id, "CSV", csv_filepath)
+        session_manager.store_user_selection(user_id, "PLOT_TYPE", plot_type)
         
         columns = DataExportService.get_csv_columns(csv_filepath)
         if not columns:
@@ -459,7 +464,7 @@ def _prepare_plot(query_text: str, response_url: str, payload: Dict[str, Any]):
                     },
                     {
                         "type": "button",
-                        "text": {"type": "plain_text", "text": "Generate Plot"},
+                        "text": {"type": "plain_text", "text": f"Generate {plot_type.title()} Plot"},
                         "value": query_text,
                         "action_id": "generate_plot_button"
                     }
@@ -486,8 +491,9 @@ def _generate_plot(user_id: str, response_url: str, channel_id: str, query_text:
     import time
     
     try:
-        # Get user selections
+        # Get user selections including plot type
         x_axis, y_axis, csv_filepath = session_manager.get_user_selections(user_id)
+        plot_type = session_manager.get_user_selection(user_id, "PLOT_TYPE") or "bar"
         
         # Rebuild CSV if needed
         if not csv_filepath or not os.path.exists(csv_filepath):
@@ -512,8 +518,11 @@ def _generate_plot(user_id: str, response_url: str, channel_id: str, query_text:
             })
             return
         
-        # Create plot
-        plot_filepath = DataExportService.create_bar_plot(csv_filepath, x_axis, y_axis, user_id)
+        # Create plot based on type
+        if plot_type == "line":
+            plot_filepath = DataExportService.create_line_plot(csv_filepath, x_axis, y_axis, user_id)
+        else:
+            plot_filepath = DataExportService.create_bar_plot(csv_filepath, x_axis, y_axis, user_id)
         
         if not plot_filepath:
             requests.post(response_url, json={
@@ -591,13 +600,15 @@ def _generate_insights(query_text: str, response_url: str, payload: Dict[str, An
             })
             return
         
-        # Format the insights response
+        # Format the insights response with proper Slack markdown
+        formatted_insights = _format_insights_for_slack(insights)
+        
         insights_message = {
             "response_type": "in_channel",
-            "text": f"🔍 **Data Insights for:** _{query_text}_",
+            "text": f"🔍 *Data Insights for:* _{query_text}_",
             "attachments": [{
                 "color": "#36C5F0",
-                "text": insights,
+                "text": formatted_insights,
                 "mrkdwn_in": ["text"],
                 "footer": f"Based on {len(data)} rows of data",
                 "footer_icon": "https://platform.slack-edge.com/img/default_application_icon.png"
@@ -612,3 +623,49 @@ def _generate_insights(query_text: str, response_url: str, payload: Dict[str, An
             "response_type": "ephemeral",
             "text": f"Error generating insights: {str(e)}"
         })
+
+
+def _format_insights_for_slack(insights: str) -> str:
+    """
+    Convert standard Markdown to Slack's mrkdwn format.
+    
+    Args:
+        insights: Raw insights text with potential Markdown formatting
+        
+    Returns:
+        Formatted text using Slack's mrkdwn syntax
+    """
+    if not insights:
+        return insights
+    
+    # Convert common Markdown patterns to Slack mrkdwn
+    formatted = insights
+    
+    # Convert **bold** to *bold* (Slack uses single asterisks for bold)
+    import re
+    formatted = re.sub(r'\*\*(.*?)\*\*', r'*\1*', formatted)
+    
+    # Convert __bold__ to *bold* as well
+    formatted = re.sub(r'__(.*?)__', r'*\1*', formatted)
+    
+    # Convert *italic* to _italic_ (Slack uses underscores for italic)
+    # But be careful not to convert the bold asterisks we just created
+    # Use negative lookbehind/lookahead to avoid converting bold markers
+    formatted = re.sub(r'(?<!\*)\*(?!\*)([^*]+?)(?<!\*)\*(?!\*)', r'_\1_', formatted)
+    
+    # Convert headers (# Header) to bold with line breaks
+    formatted = re.sub(r'^#+\s*(.+?)$', r'*\1*', formatted, flags=re.MULTILINE)
+    
+    # Convert bullet points to Slack format
+    formatted = re.sub(r'^[\-\*\+]\s+', '• ', formatted, flags=re.MULTILINE)
+    
+    # Convert numbered lists to Slack format (keep the numbers)
+    formatted = re.sub(r'^\d+\.\s+', lambda m: f"{m.group(0)}", formatted, flags=re.MULTILINE)
+    
+    # Clean up excessive line breaks (max 2 consecutive)
+    formatted = re.sub(r'\n\s*\n\s*\n+', '\n\n', formatted)
+    
+    # Ensure proper spacing around sections
+    formatted = re.sub(r'\n(\*[^*]+\*)\n', r'\n\n\1\n', formatted)
+    
+    return formatted.strip()

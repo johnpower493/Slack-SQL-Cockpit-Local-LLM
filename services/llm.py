@@ -123,15 +123,21 @@ class LLMService:
                 data_summary += f"Row {i}: {dict(row)}\n"
         
         insights_prompt = (
-            "You are a data analyst providing insights on query results. "
+            "You are a data analyst providing insights on query results for a Slack message. "
             "Analyze the data and provide meaningful, actionable insights based on the original question and results. "
             "Focus on trends, patterns, outliers, and business implications. "
             "Keep your response concise but insightful (2-4 paragraphs).\n\n"
+            "FORMATTING GUIDELINES:\n"
+            "- Use **bold** for key findings and important metrics\n"
+            "- Use bullet points (- or •) for lists\n"
+            "- Use clear section headers with **bold** formatting\n"
+            "- Keep sentences concise and scannable\n"
+            "- Avoid excessive nested formatting\n\n"
             f"Original Question: {question}\n"
             f"SQL Query: {sql_query}\n"
             f"Database Schema Context:\n{schema[:500]}...\n\n"  # Limit schema for token efficiency
             f"Query Results Summary:\n{data_summary}\n\n"
-            "Please provide data-driven insights:"
+            "Please provide data-driven insights with clear formatting:"
         )
         
         try:

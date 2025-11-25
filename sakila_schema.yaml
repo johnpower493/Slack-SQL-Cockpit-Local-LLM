@@ -1,0 +1,167 @@
+sakila:
+  tables:
+
+    actor:
+      columns:
+        actor_id: {type: integer, primary_key: true}
+        first_name: {type: text, nullable: false}
+        last_name: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys: []
+
+    language:
+      columns:
+        language_id: {type: integer, primary_key: true}
+        name: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys: []
+
+    film:
+      columns:
+        film_id: {type: integer, primary_key: true}
+        title: {type: text, nullable: false}
+        description: {type: text}
+        release_year: {type: integer}
+        language_id: {type: integer, nullable: false}
+        rental_duration: {type: integer, default: 3}
+        rental_rate: {type: real, default: 4.99}
+        length: {type: integer}
+        replacement_cost: {type: real, default: 19.99}
+        rating: {type: text, default: "G"}
+        special_features: {type: text}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: language_id, references: language(language_id)}
+
+    film_actor:
+      columns:
+        actor_id: {type: integer, primary_key: true}
+        film_id: {type: integer, primary_key: true}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: actor_id, references: actor(actor_id)}
+        - {column: film_id, references: film(film_id)}
+
+    category:
+      columns:
+        category_id: {type: integer, primary_key: true}
+        name: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys: []
+
+    film_category:
+      columns:
+        film_id: {type: integer, primary_key: true}
+        category_id: {type: integer, primary_key: true}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: film_id, references: film(film_id)}
+        - {column: category_id, references: category(category_id)}
+
+    country:
+      columns:
+        country_id: {type: integer, primary_key: true}
+        country: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys: []
+
+    city:
+      columns:
+        city_id: {type: integer, primary_key: true}
+        city: {type: text, nullable: false}
+        country_id: {type: integer, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: country_id, references: country(country_id)}
+
+    address:
+      columns:
+        address_id: {type: integer, primary_key: true}
+        address: {type: text, nullable: false}
+        address2: {type: text}
+        district: {type: text, nullable: false}
+        city_id: {type: integer, nullable: false}
+        postal_code: {type: text}
+        phone: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: city_id, references: city(city_id)}
+
+    store:
+      columns:
+        store_id: {type: integer, primary_key: true}
+        manager_staff_id: {type: integer, nullable: false}
+        address_id: {type: integer, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: address_id, references: address(address_id)}
+
+    staff:
+      columns:
+        staff_id: {type: integer, primary_key: true}
+        first_name: {type: text, nullable: false}
+        last_name: {type: text, nullable: false}
+        address_id: {type: integer, nullable: false}
+        picture: {type: blob}
+        email: {type: text}
+        store_id: {type: integer, nullable: false}
+        active: {type: integer, default: 1}
+        username: {type: text, nullable: false}
+        password: {type: text}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: address_id, references: address(address_id)}
+        - {column: store_id, references: store(store_id)}
+
+    customer:
+      columns:
+        customer_id: {type: integer, primary_key: true}
+        store_id: {type: integer, nullable: false}
+        first_name: {type: text, nullable: false}
+        last_name: {type: text, nullable: false}
+        email: {type: text}
+        address_id: {type: integer, nullable: false}
+        active: {type: integer, default: 1}
+        create_date: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: store_id, references: store(store_id)}
+        - {column: address_id, references: address(address_id)}
+
+    inventory:
+      columns:
+        inventory_id: {type: integer, primary_key: true}
+        film_id: {type: integer, nullable: false}
+        store_id: {type: integer, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: film_id, references: film(film_id)}
+        - {column: store_id, references: store(store_id)}
+
+    rental:
+      columns:
+        rental_id: {type: integer, primary_key: true}
+        rental_date: {type: text, nullable: false}
+        inventory_id: {type: integer, nullable: false}
+        customer_id: {type: integer, nullable: false}
+        return_date: {type: text}
+        staff_id: {type: integer, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: inventory_id, references: inventory(inventory_id)}
+        - {column: customer_id, references: customer(customer_id)}
+        - {column: staff_id, references: staff(staff_id)}
+
+    payment:
+      columns:
+        payment_id: {type: integer, primary_key: true}
+        customer_id: {type: integer, nullable: false}
+        staff_id: {type: integer, nullable: false}
+        rental_id: {type: integer, nullable: false}
+        amount: {type: real, nullable: false}
+        payment_date: {type: text, nullable: false}
+        last_update: {type: text, default: CURRENT_TIMESTAMP}
+      foreign_keys:
+        - {column: customer_id, references: customer(customer_id)}
+        - {column: staff_id, references: staff(staff_id)}
+        - {column: rental_id, references: rental(rental_id)}
