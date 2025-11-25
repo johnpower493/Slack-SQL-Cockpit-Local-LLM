@@ -1,9 +1,9 @@
-# Slack SQL Cockpit - Release 1
+# CircularQuery - Release 1
 ## Self service analytics made easy
 
 Ask questions in Slack → get **safe, read-only SQL** (SQLite) via **Ollama** (IBM Granite Micro or any local model), plus **paginated results**, **CSV export**, and **inline plots** — no data leaves your machine.
 
-> Works with `/dd` (Data Distillery SQL assistant), CSV exports, and “Plot Data” interactivity.
+> Works with `/dd` (CircularQuery SQL assistant), CSV exports, and "Plot Data" interactivity.
 
 ---
 
@@ -36,8 +36,8 @@ Ask questions in Slack → get **safe, read-only SQL** (SQLite) via **Ollama** (
 
 ### 2) Clone & install
 
-`git clone https://github.com/johnpower493/Slack-SQL-Cockpit-Local-LLM.git` \
-`cd slack-sql-copilot` \
+`git clone https://github.com/johnpower493/CircularQuery.git` \
+`cd CircularQuery` \
 `python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate` \
 `pip install -r requirements.txt` \
 
@@ -93,7 +93,7 @@ ngrok http http://localhost:5000
 
 ### 7) In Slack
 
-Invite the bot/app to your channel: /invite @DataDistillery
+Invite the bot/app to your channel: /invite @CircularQuery
 
 Try: /dd top 5 customers by total spend
 Use the Export CSV / 📊 Bar Plot / 📈 Line Plot / 🔍 Insights buttons.

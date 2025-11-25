@@ -1,5 +1,5 @@
 """
-Configuration management for the Data Distillery Slack SQL Cockpit.
+Configuration management for CircularQuery.
 """
 import os
 from dotenv import load_dotenv

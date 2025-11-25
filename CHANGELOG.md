@@ -19,6 +19,18 @@
   - Optimized for time series and trend analysis
   - Uses averaging for duplicate X values (vs summing for bar plots)
 
+- **🎨 Professional Plot Styling**: Publication-ready visualizations
+  - Modern color schemes using Seaborn palettes
+  - High-resolution output (300 DPI) for crisp charts
+  - Professional typography with bold labels and titles
+  - Value labels on bar charts for easy reading
+  - Data point labels on line charts (for ≤10 points)
+  - Automatic trend lines for time series data
+  - Enhanced grid styling and clean backgrounds
+  - Smart number formatting with thousands separators
+  - Improved axis labeling with proper title casing
+  - Complementary color schemes for better visual appeal
+
 ### Enhanced
 - **Improved Plot Experience**: Split single "Plot Data" into specific plot types
   - "📊 Bar Plot" for categorical comparisons
@@ -47,7 +59,7 @@
 
 ---
 
-All notable changes to the Data Distillery Slack SQL Cockpit will be documented in this file.
+All notable changes to CircularQuery will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -56,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Release 1 - Major Refactoring
 
-This release represents a complete architectural overhaul of the Data Distillery Slack SQL Cockpit, transforming it from a monolithic application into a secure, modular, production-ready system.
+This release represents a complete architectural overhaul of CircularQuery, transforming it from a monolithic application into a secure, modular, production-ready system.
 
 ### Added
 - **Modular Architecture**: Clean separation into services, routes, models, and utilities

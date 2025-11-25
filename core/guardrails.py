@@ -1,5 +1,5 @@
 """
-Enhanced SQL guardrails for the Data Distillery Slack SQL Cockpit.
+Enhanced SQL guardrails for CircularQuery.
 Provides comprehensive security validation for SQL queries.
 """
 import re

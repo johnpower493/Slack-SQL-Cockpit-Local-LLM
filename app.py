@@ -1,5 +1,5 @@
 """
-Refactored Data Distillery Slack SQL Cockpit with Local LLM.
+CircularQuery - Self-service analytics made easy.
 
 A Flask application that converts natural language questions into SQL queries
 using local LLM (Ollama), executes them against SQLite, and provides interactive

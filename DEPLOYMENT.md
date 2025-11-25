@@ -1,6 +1,6 @@
 # Deployment Guide - Release 1
 
-This guide covers deploying the Slack SQL Cockpit Release 1 to production.
+This guide covers deploying CircularQuery Release 1 to production.
 
 ## Pre-Deployment Checklist
 
@@ -71,7 +71,7 @@ sudo nano /etc/systemd/system/data-distillery.service
 **systemd service file:**
 ```ini
 [Unit]
-Description=Data Distillery Slack SQL Cockpit
+Description=CircularQuery
 After=network.target
 
 [Service]
@@ -370,7 +370,7 @@ netstat -tlnp | grep :5000
 - [ ] Monitoring is active
 
 ### 🎉 **Success!**
-Your Data Distillery Slack SQL Cockpit Release 1 is now deployed and ready for production use!
+Your CircularQuery Release 1 is now deployed and ready for production use!
 
 ---
 
