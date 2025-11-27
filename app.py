@@ -34,7 +34,10 @@ def create_app():
         
         # Log startup information
         logger.info(f"Using SQLite database: {config.SQLITE_PATH}")
-        logger.info(f"Using Ollama model: {config.OLLAMA_MODEL} at {config.OLLAMA_BASE_URL}")
+        if config.LLM_BACKEND == "groq":
+            logger.info(f"Using Groq LLM backend with model: {config.GROQ_MODEL}")
+        else:
+            logger.info(f"Using Ollama LLM backend with model: {config.OLLAMA_MODEL} at {config.OLLAMA_BASE_URL}")
         
         # Display schema summary
         from services.database import DatabaseService

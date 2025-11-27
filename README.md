@@ -4,9 +4,9 @@
   <img src="examples/logo-small.png" alt="CircularQuery logo" width="256">
   <p>
     Ask questions in Slack → get <strong>safe, read-only SQL</strong> (SQLite) via
-    <strong>Ollama</strong> (IBM Granite Micro or any local model), plus
+    <strong>Ollama</strong> (local models) or <strong>Groq</strong> (cloud models), plus
     <strong>paginated results</strong>, <strong>CSV export</strong>, and
-    <strong>inline plots</strong> — no data leaves your machine.
+    <strong>inline plots</strong>.
   </p>
 </div>
 
@@ -39,7 +39,7 @@
 ### 1) Prereqs
 - Python 3.10+  
 - Slack workspace where you can install custom apps
-- [Ollama](https://ollama.com/) running locally
+- **Either:** [Ollama](https://ollama.com/) running locally **OR** [Groq API key](https://console.groq.com)
 - SQLite DB (Chinook recommended for demo)
 
 ### 2) Clone & install
@@ -49,11 +49,17 @@
 `python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate` \
 `pip install -r requirements.txt` \
 
-### 3) Pull a local model
+### 3) Set up your LLM backend
 
-Pick one you like (examples):
-ollama pull  granite4
+**Option A: Local LLM with Ollama (privacy-first)**
+Pull a local model (examples):
+```bash
+ollama pull granite4
 ollama pull qwen3:4b
+```
+
+**Option B: Cloud LLM with Groq (speed-first)**
+Sign up for a free Groq account at https://console.groq.com and get an API key.
 
 ### 4) Copy env and set tokens
 cp .env.example .env
@@ -61,15 +67,25 @@ cp .env.example .env
 ```
 .env keys
 
-SLACK_BOT_TOKEN — from “Install App” → Bot User OAuth Token (xoxb-...)
+**Required:**
+SLACK_BOT_TOKEN — from "Install App" → Bot User OAuth Token (xoxb-...)
 
+**LLM Backend (choose one):**
+LLM_BACKEND — "ollama" (local) or "groq" (cloud)
+
+**For Ollama (local):**
 OLLAMA_BASE_URL — default http://127.0.0.1:11434
+OLLAMA_MODEL — e.g. granite4, qwen3:4b
 
-OLLAMA_MODEL — e.g. qwen3:4b
+**For Groq (cloud):**
+GROQ_API_KEY — your Groq API key (gsk_...)
+GROQ_MODEL — e.g. llama-3.1-8b-instant, openai/gpt-oss-20b
 
+**Database:**
 SQLITE_PATH — ./chinook.db (or your DB)
 
-Optional: SCHEMA_YAML_PATH if you want to override auto-introspection
+**Optional:**
+SCHEMA_YAML_PATH — override auto-introspection
 ```
 
 ### 5) Slack app setup (one-shot manifest)
@@ -115,7 +131,7 @@ Slack Slash Commands  +  Interactivity (Buttons/Selects)
                 |                     |
                 |                 Prompting
                 v                     v
-           Ollama (Local LLM)  ——>  SQL (SQLite dialect)
+    Ollama (Local) OR Groq (Cloud)  ——>  SQL (SQLite dialect)
                 |
                 v
           SQLite (read-only) → results → CSV / Plot → Slack files.upload

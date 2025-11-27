@@ -234,14 +234,26 @@ def _process_sql_query(query_request: QueryRequest):
     import requests
     
     try:
+        print(f"[DEBUG] Processing query: '{query_request.question}' for user {query_request.user_id}")
+        print(f"[DEBUG] Response URL: {query_request.response_url}")
+        print(f"[DEBUG] LLM Backend: {config.LLM_BACKEND}")
+        
+        start_time = time.time()
         # Generate SQL from natural language
+        print(f"[DEBUG] Generating SQL with {config.LLM_BACKEND}...")
+        llm_start = time.time()
         sql_query = LLMService.get_sql_query(query_request.question, DATABASE_SCHEMA)
+        llm_time = time.time() - llm_start
+        print(f"[DEBUG] LLM took {llm_time:.2f}s, generated: {sql_query}")
         
         if not sql_query:
-            requests.post(query_request.response_url, json={
+            error_response = {
                 "response_type": "in_channel",
                 "text": "I couldn't generate a safe SELECT statement for SQLite. Try rephrasing your question."
-            })
+            }
+            print(f"[DEBUG] Posting error response to: {query_request.response_url}")
+            response = requests.post(query_request.response_url, json=error_response, timeout=10)
+            print(f"[DEBUG] Error response status: {response.status_code}")
             return
         
         # Execute query
@@ -307,14 +319,27 @@ def _process_sql_query(query_request: QueryRequest):
             "attachments": [attachment]
         }
         
-        requests.post(query_request.response_url, json=message)
+        print(f"[DEBUG] Posting success response to: {query_request.response_url}")
+        print(f"[DEBUG] Total processing time: {time.time() - start_time:.2f}s")
+        response = requests.post(query_request.response_url, json=message, timeout=10)
+        print(f"[DEBUG] Success response status: {response.status_code}")
+        if response.status_code != 200:
+            print(f"[DEBUG] Response error: {response.text}")
         
     except Exception as e:
         print(f"Error processing SQL query: {e}")
-        requests.post(query_request.response_url, json={
-            "response_type": "ephemeral",
-            "text": f"Error processing query: {str(e)}"
-        })
+        import traceback
+        traceback.print_exc()
+        
+        try:
+            error_response = {
+                "response_type": "ephemeral",
+                "text": f"Error processing query: {str(e)}"
+            }
+            response = requests.post(query_request.response_url, json=error_response, timeout=10)
+            print(f"[DEBUG] Exception response status: {response.status_code}")
+        except Exception as post_error:
+            print(f"Failed to post error response: {post_error}")
 
 
 def _export_csv(query_text: str, response_url: str, payload: Dict[str, Any]):

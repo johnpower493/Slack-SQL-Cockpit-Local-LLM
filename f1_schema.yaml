@@ -1,0 +1,657 @@
+tables:
+  circuits:
+    description: ''
+    columns:
+    - name: circuitId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: circuitRef
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: location
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: country
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lat
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lng
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: alt
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: url
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  constructor_results:
+    description: ''
+    columns:
+    - name: constructorResultsId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: constructorId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: points
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: status
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  constructor_standings:
+    description: ''
+    columns:
+    - name: constructorStandingsId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: constructorId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: points
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: positionText
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wins
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  constructors:
+    description: ''
+    columns:
+    - name: constructorId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: constructorRef
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: nationality
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: url
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  driver_standings:
+    description: ''
+    columns:
+    - name: driverStandingsId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: points
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: positionText
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wins
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  drivers:
+    description: ''
+    columns:
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverRef
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: number
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: code
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: forename
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: surname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: dob
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: nationality
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: url
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  lap_times:
+    description: ''
+    columns:
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lap
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: milliseconds
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  pit_stops:
+    description: ''
+    columns:
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: stop
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lap
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: duration
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: milliseconds
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  qualifying:
+    description: ''
+    columns:
+    - name: qualifyId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: constructorId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: number
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: q1
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: q2
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: q3
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  races:
+    description: ''
+    columns:
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: year
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: round
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: circuitId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: url
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fp1_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fp1_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fp2_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fp2_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fp3_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fp3_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: quali_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: quali_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: sprint_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: sprint_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  results:
+    description: ''
+    columns:
+    - name: resultId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: constructorId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: number
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: grid
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: positionText
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: positionOrder
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: points
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: laps
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: milliseconds
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fastestLap
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: rank
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fastestLapTime
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fastestLapSpeed
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: statusId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  seasons:
+    description: ''
+    columns:
+    - name: year
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: url
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  sprint_results:
+    description: ''
+    columns:
+    - name: resultId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: raceId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: driverId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: constructorId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: number
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: grid
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: positionText
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: positionOrder
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: points
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: laps
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: milliseconds
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fastestLap
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fastestLapTime
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: statusId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  status:
+    description: ''
+    columns:
+    - name: statusId
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: status
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []

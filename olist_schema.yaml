@@ -1,0 +1,395 @@
+tables:
+  customers:
+    description: ''
+    columns:
+    - name: customer_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: customer_unique_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: customer_zip_code_prefix
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: customer_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: customer_state
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  geolocation:
+    description: ''
+    columns:
+    - name: geolocation_zip_code_prefix
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: geolocation_lat
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: geolocation_lng
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: geolocation_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: geolocation_state
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  leads_closed:
+    description: ''
+    columns:
+    - name: mql_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: seller_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: sdr_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: sr_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: won_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: business_segment
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lead_type
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lead_behaviour_profile
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: has_company
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: has_gtin
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: average_stock
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: business_type
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: declared_product_catalog_size
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: declared_monthly_revenue
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  leads_qualified:
+    description: ''
+    columns:
+    - name: mql_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: first_contact_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: landing_page_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: origin
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  order_items:
+    description: ''
+    columns:
+    - name: order_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_item_id
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: seller_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: shipping_limit_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: price
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: freight_value
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  order_payments:
+    description: ''
+    columns:
+    - name: order_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: payment_sequential
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: payment_type
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: payment_installments
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: payment_value
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  order_reviews:
+    description: ''
+    columns:
+    - name: review_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: review_score
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: review_comment_title
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: review_comment_message
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: review_creation_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: review_answer_timestamp
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  orders:
+    description: ''
+    columns:
+    - name: order_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: customer_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_status
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_purchase_timestamp
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_approved_at
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_delivered_carrier_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_delivered_customer_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: order_estimated_delivery_date
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  product_category_name_translation:
+    description: ''
+    columns:
+    - name: product_category_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_category_name_english
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  products:
+    description: ''
+    columns:
+    - name: product_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_category_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_name_lenght
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_description_lenght
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_photos_qty
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_weight_g
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_length_cm
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_height_cm
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: product_width_cm
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  sellers:
+    description: ''
+    columns:
+    - name: seller_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: seller_zip_code_prefix
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: seller_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: seller_state
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
