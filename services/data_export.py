@@ -245,16 +245,21 @@ class DataExportService:
             y_data = pd.to_numeric(df[y_column], errors='coerce')
             
             # Try to parse X as datetime for better time series plots
+            is_categorical = False
             try:
                 x_data_parsed = pd.to_datetime(x_data, infer_datetime_format=True)
                 x_for_plot = x_data_parsed
+                x_labels = None  # Use default datetime labels
             except (ValueError, TypeError):
                 # If not datetime, try numeric
                 try:
                     x_for_plot = pd.to_numeric(x_data, errors='raise')
+                    x_labels = None  # Use numeric values as labels
                 except (ValueError, TypeError):
-                    # Use as string with numeric indices
+                    # Use categorical data - plot with indices but keep original labels
                     x_for_plot = range(len(x_data))
+                    x_labels = x_data.astype(str)  # Keep original string labels
+                    is_categorical = True
             
             # Apply professional styling
             apply_professional_style()
@@ -281,8 +286,10 @@ class DataExportService:
             if len(y_data) <= 10:
                 for i, (x_val, y_val) in enumerate(zip(x_for_plot, y_data)):
                     if not pd.isna(y_val):
+                        # Use the correct x position for annotation
+                        x_pos = x_val if not is_categorical else i
                         ax.annotate(f'{y_val:,.0f}' if abs(y_val) >= 1 else f'{y_val:.2f}',
-                                   (x_val, y_val),
+                                   (x_pos, y_val),
                                    textcoords="offset points",
                                    xytext=(0,10),
                                    ha='center',
@@ -295,11 +302,13 @@ class DataExportService:
                 plt.xticks(rotation=45, ha='right')
                 # Better date formatting
                 fig.autofmt_xdate()
-            elif x_for_plot is not range(len(x_data)):
-                plt.xticks(rotation=45, ha='right')
+            elif is_categorical and x_labels is not None:
+                # For categorical data, use original labels with proper positioning
+                ax.set_xticks(range(len(x_labels)))
+                ax.set_xticklabels(x_labels, rotation=45, ha='right')
             else:
-                # For categorical data, use original labels
-                plt.xticks(range(len(x_data)), x_data.astype(str), rotation=45, ha='right')
+                # For numeric data
+                plt.xticks(rotation=45, ha='right')
             
             # Enhanced styling
             ax.set_xlabel(x_column.replace('_', ' ').title(), fontweight='bold')
