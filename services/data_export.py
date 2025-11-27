@@ -355,6 +355,139 @@ class DataExportService:
             print(f"Error creating line plot: {e}")
             plt.close()  # Ensure plot is closed even on error
             return None
+    
+    @staticmethod
+    def create_pie_chart(csv_filepath: str, category_column: str, value_column: str, 
+                        user_id: str) -> Optional[str]:
+        """
+        Create a pie chart from CSV data and save to file.
+        
+        Args:
+            csv_filepath: Path to CSV file
+            category_column: Column name for category labels (pie slices)
+            value_column: Column name for values (slice sizes)
+            user_id: User ID for unique filename
+            
+        Returns:
+            Path to saved plot image or None if failed
+        """
+        try:
+            df = pd.read_csv(csv_filepath)
+            
+            if df.empty or category_column not in df.columns or value_column not in df.columns:
+                print(f"Invalid columns or empty data: {category_column}, {value_column}")
+                return None
+            
+            # Aggregate duplicate categories by summing values
+            if df.duplicated(subset=[category_column]).any():
+                df = df.groupby(category_column, dropna=False)[value_column].sum().reset_index()
+            
+            # Convert data
+            categories = df[category_column].astype(str)
+            values = pd.to_numeric(df[value_column], errors='coerce')
+            
+            # Remove any NaN values
+            valid_mask = ~(values.isna() | (values == 0))
+            categories = categories[valid_mask]
+            values = values[valid_mask]
+            
+            if len(values) == 0:
+                print("No valid data for pie chart")
+                return None
+            
+            # Limit to top 10 categories for readability
+            if len(values) > 10:
+                # Sort by values and take top 10
+                combined = list(zip(categories, values))
+                combined.sort(key=lambda x: x[1], reverse=True)
+                categories, values = zip(*combined[:10])
+                categories = list(categories)
+                values = list(values)
+            
+            # Apply professional styling
+            apply_professional_style()
+            
+            # Create figure with proper sizing for pie chart
+            fig, ax = plt.subplots(figsize=(12, 8))
+            
+            # Create a beautiful color palette
+            colors = sns.color_palette("Set3", len(values))
+            if len(values) > 10:
+                colors = sns.color_palette("tab20", len(values))
+            
+            # Create pie chart with enhanced styling
+            wedges, texts, autotexts = ax.pie(
+                values, 
+                labels=categories,
+                autopct='%1.1f%%',
+                startangle=90,
+                colors=colors,
+                explode=[0.05 if i == 0 else 0 for i in range(len(values))],  # Explode largest slice
+                shadow=True,
+                textprops={'fontsize': 10, 'fontweight': 'bold'}
+            )
+            
+            # Enhance text styling
+            for autotext in autotexts:
+                autotext.set_color('white')
+                autotext.set_fontweight('bold')
+                autotext.set_fontsize(9)
+            
+            # Add value labels alongside percentages for clarity
+            for i, (category, value) in enumerate(zip(categories, values)):
+                angle = (wedges[i].theta2 + wedges[i].theta1) / 2
+                x = 1.1 * plt.np.cos(plt.np.radians(angle))
+                y = 1.1 * plt.np.sin(plt.np.radians(angle))
+                
+                # Add value annotation outside the pie
+                ax.annotate(
+                    f'{value:,.0f}' if abs(value) >= 1 else f'{value:.2f}',
+                    xy=(x, y), 
+                    xytext=(x*1.2, y*1.2),
+                    ha='center', 
+                    va='center',
+                    fontsize=8,
+                    fontweight='bold',
+                    bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8, edgecolor='gray'),
+                    arrowprops=dict(arrowstyle='->', color='gray', alpha=0.7)
+                )
+            
+            # Set title with enhanced styling
+            ax.set_title(
+                f"{value_column.replace('_', ' ').title()} by {category_column.replace('_', ' ').title()}", 
+                fontweight='bold', 
+                fontsize=16,
+                pad=30
+            )
+            
+            # Equal aspect ratio ensures that pie is drawn as a circle
+            ax.axis('equal')
+            
+            # Add a subtle legend if we have many categories
+            if len(categories) > 6:
+                ax.legend(
+                    wedges, 
+                    [f"{cat[:20]}..." if len(str(cat)) > 20 else str(cat) for cat in categories],
+                    title=category_column.replace('_', ' ').title(),
+                    loc="center left",
+                    bbox_to_anchor=(1, 0, 0.5, 1),
+                    fontsize=9
+                )
+            
+            plt.tight_layout()
+            
+            # Save plot
+            plot_filename = f"pie_chart_{user_id}_{int(time.time())}.png"
+            plot_filepath = os.path.join(config.EXPORTS_DIR, plot_filename)
+            plt.savefig(plot_filepath, bbox_inches='tight', dpi=300)
+            plt.close()
+            
+            return plot_filepath
+            
+        except Exception as e:
+            print(f"Error creating pie chart: {e}")
+            plt.close()  # Ensure plot is closed even on error
+            return None
 
 
 class SessionManager:

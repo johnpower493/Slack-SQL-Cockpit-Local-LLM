@@ -119,9 +119,15 @@ def handle_slack_interactions():
                 ).start()
                 return jsonify({"text": "Exporting CSV..."}), 200
                 
-            elif action.action_id in ['plot_bar', 'plot_line']:
+            elif action.action_id in ['plot_bar', 'plot_line', 'plot_pie']:
                 # Handle plot preparation with plot type
-                plot_type = 'bar' if action.action_id == 'plot_bar' else 'line'
+                if action.action_id == 'plot_bar':
+                    plot_type = 'bar'
+                elif action.action_id == 'plot_line':
+                    plot_type = 'line'
+                else:  # plot_pie
+                    plot_type = 'pie'
+                
                 threading.Thread(
                     target=_prepare_plot,
                     args=(action.value, response_url, payload, plot_type),
@@ -137,6 +143,10 @@ def handle_slack_interactions():
                     daemon=True
                 ).start()
                 return jsonify({"text": "🔍 Generating insights..."}), 200
+            
+            elif action.action_id == "page_info":
+                # This is just a visual indicator, ignore clicks
+                return jsonify({"response_type": "ephemeral", "text": "This shows the current page number."}), 200
                 
             elif action.action_id in ['next', 'previous']:
                 # Handle pagination
@@ -198,7 +208,7 @@ def help_command():
                     },
                     {
                         "title": "Plots",
-                        "value": "Use *📊 Bar Plot* or *📈 Line Plot* → choose axes → *Generate Plot* (uploads image)",
+                        "value": "Use *📊 Bar Plot*, *📈 Line Plot*, or *🥧 Pie Chart* → choose data columns → *Generate Plot* (uploads image)",
                         "short": False
                     },
                     {
@@ -282,31 +292,47 @@ def _process_sql_query(query_request: QueryRequest):
         page_data = paginate_query_results(data, query_request.page_number, config.ROWS_PER_PAGE)
         formatted_table = format_data_as_table(page_data)
         
-        # Create action buttons
-        buttons = [
-            create_slack_button("export_csv", "Export as CSV", query_request.question),
-            create_slack_button("plot_bar", "📊 Bar Plot", query_request.question),
-            create_slack_button("plot_line", "📈 Line Plot", query_request.question),
+        # Create action buttons in 2 clean rows
+        # Row 1: Main actions (max 5 buttons)
+        row1_buttons = [
+            create_slack_button("export_csv", "📎 Export CSV", query_request.question),
+            create_slack_button("plot_bar", "📊 Bar Chart", query_request.question),
+            create_slack_button("plot_line", "📈 Line Chart", query_request.question),
+            create_slack_button("plot_pie", "🥧 Pie Chart", query_request.question),
             create_slack_button("insights", "🔍 Insights", query_request.question, "default"),
         ]
         
-        # Add pagination buttons if needed
+        # Row 2: Pagination (only if needed)
+        row2_buttons = []
         if pagination["total_pages"] > 1:
             if pagination["has_previous"]:
-                buttons.append(create_slack_button(
+                row2_buttons.append(create_slack_button(
                     "previous", 
-                    f"Previous ({pagination['previous_page']})", 
+                    f"⬅️ Page {pagination['previous_page']}", 
                     f"{pagination['previous_page']}|{query_request.question}"
                 ))
+            
+            # Add page indicator (non-clickable visual element)
+            row2_buttons.append({
+                "type": "button",
+                "text": {"type": "plain_text", "text": f"📄 {pagination['current_page']} of {pagination['total_pages']}"},
+                "action_id": "page_info",
+                "style": "primary"
+            })
+            
             if pagination["has_next"]:
-                buttons.append(create_slack_button(
+                row2_buttons.append(create_slack_button(
                     "next", 
-                    f"Next ({pagination['next_page']})", 
+                    f"Page {pagination['next_page']} ➡️", 
                     f"{pagination['next_page']}|{query_request.question}"
                 ))
         
-        # Create response message
-        attachment = create_slack_attachment_with_buttons("Navigate or export:", buttons)
+        # Create clean attachments
+        attachments = []
+        attachments.append(create_slack_attachment_with_buttons("", row1_buttons))  # No label needed
+        
+        if row2_buttons:
+            attachments.append(create_slack_attachment_with_buttons("", row2_buttons))
         
         message = {
             "response_type": "in_channel",
@@ -316,7 +342,7 @@ def _process_sql_query(query_request: QueryRequest):
                 f"{formatted_table}\n"
                 f"Page {pagination['current_page']} of {pagination['total_pages']}"
             ),
-            "attachments": [attachment]
+            "attachments": attachments
         }
         
         print(f"[DEBUG] Posting success response to: {query_request.response_url}")
@@ -457,45 +483,87 @@ def _prepare_plot(query_text: str, response_url: str, payload: Dict[str, Any], p
             })
             return
         
-        # Create Block Kit UI for axis selection
-        blocks = [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Select axes to generate a plot:"
-                }
-            },
-            {
-                "type": "actions",
-                "elements": [
-                    {
-                        "type": "static_select",
-                        "placeholder": {"type": "plain_text", "text": "Select X-axis"},
-                        "options": [
-                            {"text": {"type": "plain_text", "text": col}, "value": col}
-                            for col in columns
-                        ],
-                        "action_id": "select_x_axis"
-                    },
-                    {
-                        "type": "static_select",
-                        "placeholder": {"type": "plain_text", "text": "Select Y-axis"},
-                        "options": [
-                            {"text": {"type": "plain_text", "text": col}, "value": col}
-                            for col in columns
-                        ],
-                        "action_id": "select_y_axis"
-                    },
-                    {
-                        "type": "button",
-                        "text": {"type": "plain_text", "text": f"Generate {plot_type.title()} Plot"},
-                        "value": query_text,
-                        "action_id": "generate_plot_button"
+        # Create Block Kit UI for axis selection - different for pie charts
+        if plot_type == 'pie':
+            # Pie chart needs Category and Value columns
+            blocks = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Select data for pie chart:"
                     }
-                ]
-            }
-        ]
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "static_select",
+                            "placeholder": {"type": "plain_text", "text": "Select Category (labels)"},
+                            "options": [
+                                {"text": {"type": "plain_text", "text": col}, "value": col}
+                                for col in columns
+                            ],
+                            "action_id": "select_x_axis"  # Reuse X-axis for category
+                        },
+                        {
+                            "type": "static_select",
+                            "placeholder": {"type": "plain_text", "text": "Select Values (sizes)"},
+                            "options": [
+                                {"text": {"type": "plain_text", "text": col}, "value": col}
+                                for col in columns
+                            ],
+                            "action_id": "select_y_axis"  # Reuse Y-axis for values
+                        },
+                        {
+                            "type": "button",
+                            "text": {"type": "plain_text", "text": "Generate Pie Chart 🥧"},
+                            "value": query_text,
+                            "action_id": "generate_plot_button"
+                        }
+                    ]
+                }
+            ]
+        else:
+            # Regular axis selection for bar/line plots
+            blocks = [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Select axes to generate a plot:"
+                    }
+                },
+                {
+                    "type": "actions",
+                    "elements": [
+                        {
+                            "type": "static_select",
+                            "placeholder": {"type": "plain_text", "text": "Select X-axis"},
+                            "options": [
+                                {"text": {"type": "plain_text", "text": col}, "value": col}
+                                for col in columns
+                            ],
+                            "action_id": "select_x_axis"
+                        },
+                        {
+                            "type": "static_select",
+                            "placeholder": {"type": "plain_text", "text": "Select Y-axis"},
+                            "options": [
+                                {"text": {"type": "plain_text", "text": col}, "value": col}
+                                for col in columns
+                            ],
+                            "action_id": "select_y_axis"
+                        },
+                        {
+                            "type": "button",
+                            "text": {"type": "plain_text", "text": f"Generate {plot_type.title()} Plot"},
+                            "value": query_text,
+                            "action_id": "generate_plot_button"
+                        }
+                    ]
+                }
+            ]
         
         requests.post(response_url, json={
             "response_type": "ephemeral",
@@ -546,7 +614,9 @@ def _generate_plot(user_id: str, response_url: str, channel_id: str, query_text:
         # Create plot based on type
         if plot_type == "line":
             plot_filepath = DataExportService.create_line_plot(csv_filepath, x_axis, y_axis, user_id)
-        else:
+        elif plot_type == "pie":
+            plot_filepath = DataExportService.create_pie_chart(csv_filepath, x_axis, y_axis, user_id)
+        else:  # bar
             plot_filepath = DataExportService.create_bar_plot(csv_filepath, x_axis, y_axis, user_id)
         
         if not plot_filepath:
