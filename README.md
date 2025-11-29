@@ -17,19 +17,41 @@
 
 ## Demo (what it does)
 
+### **Two Powerful Commands:**
+
+#### **`/dd` - Direct Data Queries**
 - `/dd top 10 tracks by revenue last year`
   - Generates a **SQLite SELECT** using your schema
   - Executes against **Chinook** (or your DB)
   - Replies with a paginated table
-  - Buttons: **Export CSV**, **📊 Bar Plot**, **📈 Line Plot** (choose X/Y, uploads chart), **🔍 Insights** (AI-powered analysis)
+  - Buttons: **Export CSV**, **📊 Bar Plot**, **📈 Line Plot**, **🥧 Pie Chart** (choose X/Y, uploads chart), **🔍 Insights** (AI-powered analysis)
 
-### Query examples:
+#### **`/askdb` - Intelligent Business Analysis** ⭐ **NEW!**
+- `/askdb why did sales drop last month?`
+  - **Smart routing**: Simple queries → fast processing, Complex questions → agentic analysis
+  - **Iterative investigation**: Multi-step reasoning for complex questions
+  - **Business insights**: Comprehensive analysis with specific recommendations
+  - **Database agnostic**: Works with any schema (F1, e-commerce, HR, finance, etc.)
+
+### `/dd` Query Examples:
 ![Query_step_3](examples/query3.gif)
 ### Simply use /dd 'your data question'
 ![Query step 1](examples/query1.png)
-### Guard rails example:
+
+### `/askdb` Business Analysis Examples:
+**Simple Questions** (fast routing):
+- `/askdb show me top 5 customers`
+- `/askdb count all orders`
+- `/askdb list product categories`
+
+**Complex Analysis** (agentic investigation):
+- `/askdb why did revenue drop in Q3?`
+- `/askdb what patterns do you see in customer behavior?` 
+- `/askdb analyze performance trends over time`
+- `/askdb what should I know about this dataset?`
+
+### Security & Visualization:
 ![Guardrails example](examples/guardrails.png)
-### Plotting xample:
 ![Plot example](examples/plot.png)
 
 ---
@@ -107,6 +129,8 @@ In each Slash Command edit page, set the Request URL to your public URL paths:
 
 /dd → https://<your-ngrok-domain>/slack/sqlquery
 
+/askdb → https://<your-ngrok-domain>/slack/askdb
+
 /help → https://<your-ngrok-domain>/slack/help
 
 If you’re local, run ngrok (or Cloudflare tunnel):
@@ -119,22 +143,39 @@ ngrok http http://localhost:5000
 
 Invite the bot/app to your channel: /invite @CircularQuery
 
-Try: /dd top 5 customers by total spend
-Use the Export CSV / 📊 Bar Plot / 📈 Line Plot / 🔍 Insights buttons.
+**Try Data Queries:**
+- `/dd top 5 customers by total spend`
+- Use the Export CSV / 📊 Bar Chart / 📈 Line Chart / 🥧 Pie Chart / 🔍 Insights buttons
+
+**Try Business Analysis:**
+- `/askdb what can you tell me about my customers?`
+- `/askdb why are sales trending down?`
+- `/askdb which products are most profitable?`
 
 ### Architecture
 ```
-Slack Slash Commands  +  Interactivity (Buttons/Selects)
+Slack Slash Commands (/dd, /askdb, /help)  +  Interactivity (Buttons/Selects)
                 | (HTTP Webhooks)
                 v
-           Flask server  <——>  Guardrails (SELECT-only, LIMIT, timeouts)
+           Flask Server + Smart Query Router
                 |                     |
-                |                 Prompting
+        Simple Questions      Complex Questions
+                |                     |
+                v                     v
+        /dd Processing        True Agentic System
+    (Fast: 1 LLM call)      (Thorough: Multi-iteration)
+                |                     |
+                v                     v
+           Guardrails (SELECT-only, LIMIT, timeouts)
+                |                     |
                 v                     v
     Ollama (Local) OR Groq (Cloud)  ——>  SQL (SQLite dialect)
-                |
-                v
+                |                     |
+                v                     v
           SQLite (read-only) → results → CSV / Plot → Slack files.upload
+                                |
+                                v
+                        Business Intelligence Synthesis
 ```
 
 ### Security & Guardrails

@@ -14,6 +14,7 @@ from services.llm import LLMService
 from services.slack import SlackService
 from services.data_export import DataExportService, session_manager
 from services.true_agentic_analyst import true_agentic_analyst
+from services.query_router import query_router
 from utils.formatting import (
     format_data_as_table, 
     paginate_query_results, 
@@ -508,9 +509,18 @@ def _process_askdb_investigation(investigation_request: QueryRequest):
         test_result = DatabaseService.execute_query("SELECT COUNT(*) AS test_count FROM drivers")
         print(f"[DEBUG] Test query result: {test_result}")
         
-        # Use TRUE agentic analyst to investigate the question
-        print(f"[DEBUG] Starting TRUE agentic investigation...")
-        analysis_result = true_agentic_analyst.investigate(investigation_request.question, schema)
+        # INTELLIGENT ROUTING: Decide between simple query vs complex investigation
+        use_agentic, routing_reason = query_router.should_use_agentic(investigation_request.question)
+        print(f"[DEBUG] Query routing decision: {routing_reason}")
+        
+        if use_agentic:
+            # Use TRUE agentic analyst for complex investigations
+            print(f"[DEBUG] Routing to AGENTIC system...")
+            analysis_result = true_agentic_analyst.investigate(investigation_request.question, schema)
+        else:
+            # Use simple /dd-style processing for straightforward queries
+            print(f"[DEBUG] Routing to SIMPLE processing...")
+            analysis_result = _process_simple_askdb_query(investigation_request.question, schema)
         
         investigation_time = time.time() - start_time
         print(f"[DEBUG] Investigation completed in {investigation_time:.2f}s")
@@ -546,6 +556,95 @@ def _process_askdb_investigation(investigation_request: QueryRequest):
             print(f"[DEBUG] Error response status: {response.status_code}")
         except Exception as post_error:
             print(f"Failed to post investigation error response: {post_error}")
+
+
+def _process_simple_askdb_query(question: str, schema: str) -> str:
+    """
+    Process simple questions using /dd-style approach with enhanced response formatting.
+    This provides the speed of /dd with the insight focus of /askdb.
+    """
+    try:
+        print(f"[SIMPLE] Processing simple askdb query: {question}")
+        
+        # Use proven /dd SQL generation
+        sql_query = LLMService.get_sql_query(question, schema)
+        
+        if not sql_query:
+            return "❌ I couldn't generate a query for this question. Try rephrasing it."
+        
+        print(f"[SIMPLE] Generated SQL: {sql_query}")
+        
+        # Execute query
+        result = DatabaseService.execute_query(sql_query)
+        if not result or not result.get('data'):
+            return "❌ No data found for your question."
+        
+        data = result['data']
+        print(f"[SIMPLE] Found {len(data)} rows of data")
+        
+        # Format simple response with insights
+        formatted_response = _format_simple_askdb_response(question, sql_query, data)
+        
+        return formatted_response
+        
+    except Exception as e:
+        print(f"[SIMPLE] Error in simple processing: {e}")
+        return f"❌ Error processing question: {str(e)}"
+
+
+def _format_simple_askdb_response(question: str, sql_query: str, data: list) -> str:
+    """Format simple query results with basic insights."""
+    
+    if not data:
+        return "❌ No data found for your question."
+    
+    # Extract key information from results
+    row_count = len(data)
+    first_row = data[0] if data else {}
+    
+    # Create response based on data type
+    if row_count == 1 and len(first_row) == 1:
+        # Single value result (count, sum, etc.)
+        key, value = list(first_row.items())[0]
+        response = f"🤖 *{question.title()}*\n\n📊 *Answer:* {value:,} {key.replace('_', ' ')}"
+        
+    elif "top" in question.lower() or "most" in question.lower():
+        # Ranking results
+        response = f"🤖 *{question.title()}*\n\n📊 *Top Results:*\n"
+        
+        for i, row in enumerate(data[:5], 1):
+            if len(row) >= 2:
+                # Assume first column is name, second is metric
+                name = list(row.values())[0]
+                metric = list(row.values())[1]
+                response += f"• {i}. {name}: {metric:,}\n"
+            else:
+                response += f"• {i}. {list(row.values())[0]}\n"
+                
+        if row_count > 5:
+            response += f"• ...and {row_count - 5} more"
+            
+    elif row_count <= 10:
+        # Small result set - show all
+        response = f"🤖 *{question.title()}*\n\n📊 *Results ({row_count} total):*\n"
+        for row in data:
+            if len(row) == 1:
+                response += f"• {list(row.values())[0]}\n"
+            else:
+                items = [f"{k}: {v}" for k, v in list(row.items())[:3]]
+                response += f"• {', '.join(items)}\n"
+    
+    else:
+        # Large result set - summarize
+        response = f"🤖 *{question.title()}*\n\n📊 *Summary:*\n"
+        response += f"• Found {row_count:,} results\n"
+        
+        # Show sample
+        response += f"• Sample: {list(data[0].values())[0]}\n"
+        response += f"• Use `/dd {question}` for detailed table view"
+    
+    response += f"\n💡 *Quick analysis via simple processing*"
+    return response
 
 
 def _convert_markdown_to_slack(markdown_text: str) -> str:

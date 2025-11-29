@@ -171,134 +171,373 @@ Create an investigation plan with ONLY this JSON format:
         return self._call_llm_for_json(prompt, "hypothesis")
     
     def _generate_focused_query(self, focus: str, question: str, schema: str, iteration: int) -> Optional[str]:
-        """Generate a focused query for current investigation step."""
-        context = ""
-        if self.findings_history:
-            latest = self.findings_history[-1]
-            context = f"Previous finding: {len(latest['data'])} rows from {latest['focus']}"
+        """Generate a focused query using the same proven method as /dd command."""
+        from services.llm import LLMService
         
-        prompt = f"""
-Generate a simple SQLite query for this investigation.
-
-Question: "{question}"
-Focus: "{focus}"
-Schema preview: {schema[:600]}
-
-Examples for similar questions:
-- Team winner: SELECT c.name, SUM(cr.points) as points FROM constructors c JOIN constructor_results cr ON c.constructorId = cr.constructorId JOIN races r ON cr.raceId = r.raceId WHERE r.year = 2020 GROUP BY c.constructorId ORDER BY points DESC LIMIT 5
-- Driver winner: SELECT d.forename, d.surname, SUM(r.points) as points FROM drivers d JOIN results r ON d.driverId = r.driverId JOIN races ra ON r.raceId = ra.raceId WHERE ra.year = 2020 GROUP BY d.driverId ORDER BY points DESC LIMIT 5
-- Overview: SELECT COUNT(*) FROM constructors
-
-Generate ONE simple query. Respond with ONLY the SQL:
-"""
+        # Use the SAME SQL generation approach as /dd command
+        print(f"[AGENTIC] Using /dd-style SQL generation for reliability...")
         
-        response = self._call_llm(prompt)
-        
-        if response and response.strip().upper().startswith("SELECT"):
-            query = response.strip().rstrip(";")
-            print(f"[AGENTIC] Generated query: {query}")
-            return query
-        
-        print(f"[AGENTIC] Invalid query response: {response}")
-        
-        # Intelligent fallback based on question content
-        if "team" in question.lower() and ("won" in question.lower() or "2020" in question.lower()):
-            fallback = "SELECT c.name, SUM(cr.points) as total_points FROM constructors c JOIN constructor_results cr ON c.constructorId = cr.constructorId JOIN races r ON cr.raceId = r.raceId WHERE r.year = 2020 GROUP BY c.constructorId ORDER BY total_points DESC LIMIT 5"
-            print(f"[AGENTIC] Using team winner fallback")
-            return fallback
-        elif "driver" in question.lower() and ("won" in question.lower() or "champion" in question.lower()):
-            year = "2021" if "2021" in question else "2020"
-            fallback = f"SELECT d.forename, d.surname, COUNT(*) as races FROM drivers d JOIN results r ON d.driverId = r.driverId GROUP BY d.driverId ORDER BY races DESC LIMIT 5"
-            print(f"[AGENTIC] Using driver fallback")
-            return fallback
+        # Create focused question for this iteration
+        if iteration == 0:
+            # First iteration: direct question
+            focused_question = question
         else:
-            fallback = "SELECT COUNT(*) as record_count FROM races WHERE year = 2020"
-            print(f"[AGENTIC] Using basic fallback")
-            return fallback
+            # Later iterations: build on findings
+            if self.findings_history:
+                latest = self.findings_history[-1]
+                if len(latest["data"]) > 0:
+                    # We have data, now dig deeper based on what we found
+                    first_result = latest["data"][0]
+                    if isinstance(first_result, dict) and len(first_result) > 0:
+                        # Use actual data to inform next question
+                        key_field = list(first_result.keys())[0]
+                        value = list(first_result.values())[0]
+                        focused_question = f"detailed analysis of {key_field} data patterns"
+                    else:
+                        focused_question = f"explore {focus} in more depth"
+                else:
+                    # No data, try different angle
+                    focused_question = f"alternative approach to {focus}"
+            else:
+                focused_question = question
+        
+        print(f"[AGENTIC] Focused question for iteration {iteration + 1}: {focused_question}")
+        
+        # Use the PROVEN /dd SQL generation method
+        sql_query = LLMService.get_sql_query(focused_question, schema)
+        
+        if sql_query:
+            print(f"[AGENTIC] /dd-style generation succeeded: {sql_query}")
+            return sql_query
+        else:
+            print(f"[AGENTIC] /dd-style generation failed, using intelligent fallback")
+            
+            # Completely database-agnostic smart fallbacks
+            return self._generate_schema_aware_fallback(question, focus, iteration, schema)
     
     def _analyze_current_findings(self, question: str, hypothesis: Dict) -> Dict:
-        """Analyze current findings to understand what we've learned."""
+        """Analyze current findings and determine if we need more investigation."""
         if not self.findings_history:
             return {"status": "no_data", "confidence": 0}
         
         latest_finding = self.findings_history[-1]
         total_findings = len(self.findings_history)
+        data_count = len(latest_finding["data"])
         
-        # Simple analysis based on data availability and question type
-        if len(latest_finding["data"]) == 0:
+        print(f"[AGENTIC] Analyzing: {data_count} rows in iteration {total_findings}")
+        
+        if data_count == 0:
             return {
                 "status": "no_data_found",
                 "confidence": 0,
-                "insight": "No data returned from last query"
+                "insight": "No data returned from last query",
+                "next_focus": "try_different_approach"
             }
-        elif "won" in question.lower() or "most" in question.lower() or "top" in question.lower():
-            # Looking for rankings/winners
+        
+        # Be more curious - don't stop at first successful query
+        if total_findings == 1:
+            # First iteration success - always dig deeper
             return {
-                "status": "ranking_found",
-                "confidence": 80,
-                "insight": f"Found {len(latest_finding['data'])} results for ranking analysis"
+                "status": "initial_data_found",
+                "confidence": 40,  # Deliberately low to encourage more investigation
+                "insight": f"Found initial data ({data_count} rows), but need deeper analysis",
+                "next_focus": "explore_details"
             }
-        elif total_findings >= 2:
+        elif total_findings == 2:
+            # Second iteration - look for patterns or validation
             return {
-                "status": "sufficient_data",
-                "confidence": 90,
-                "insight": f"Have {total_findings} findings with good data coverage"
+                "status": "pattern_emerging",
+                "confidence": 65,
+                "insight": f"Have {total_findings} data points, looking for patterns or validation",
+                "next_focus": "validate_findings"
+            }
+        elif total_findings >= 3:
+            # Multiple findings - high confidence if data is consistent
+            return {
+                "status": "comprehensive_data",
+                "confidence": 85,
+                "insight": f"Have {total_findings} comprehensive findings",
+                "next_focus": "final_verification"
             }
         else:
             return {
-                "status": "need_more_data",
+                "status": "need_more_context",
                 "confidence": 50,
-                "insight": "Need additional data to form complete answer"
+                "insight": "Need additional context to form complete understanding",
+                "next_focus": "gather_context"
             }
     
     def _decide_next_action(self, analysis: Dict, question: str, iteration: int) -> Dict:
-        """Decide what to do next based on current analysis."""
+        """Decide what to do next based on current analysis - database agnostic."""
         status = analysis.get("status", "unknown")
         confidence = analysis.get("confidence", 0)
+        next_focus = analysis.get("next_focus", "")
         
+        print(f"[AGENTIC] Decision point: status={status}, confidence={confidence}, iteration={iteration}")
+        
+        # Max iterations check
         if iteration >= self.max_iterations - 1:
             return {"action": "complete", "reason": "max_iterations_reached"}
         
-        if confidence >= 80 and "ranking_found" in status:
-            return {"action": "complete", "reason": "sufficient_confidence"}
+        # Only complete if we have high confidence AND multiple findings
+        if confidence >= 85 and len(self.findings_history) >= 2:
+            return {"action": "complete", "reason": "high_confidence_with_multiple_findings"}
         
-        if status == "no_data_found":
-            # Try different approach
-            if "driver" in question.lower():
-                return {
-                    "action": "pivot", 
-                    "pivot_focus": "driver race participation",
-                    "reason": "pivot_to_driver_data"
-                }
-            elif "team" in question.lower() or "constructor" in question.lower():
-                return {
-                    "action": "pivot",
-                    "pivot_focus": "constructor performance",
-                    "reason": "pivot_to_team_data"
-                }
+        # Be more persistent - explore the data more deeply
+        if status == "initial_data_found":
+            return {
+                "action": "continue",
+                "new_focus": self._generate_deeper_focus(question),
+                "reason": "explore_initial_findings_deeper"
+            }
+        
+        elif status == "pattern_emerging":
+            return {
+                "action": "continue", 
+                "new_focus": self._generate_validation_focus(question),
+                "reason": "validate_patterns_found"
+            }
+        
+        elif status == "no_data_found":
+            return {
+                "action": "pivot",
+                "pivot_focus": self._generate_alternative_focus(question),
+                "reason": "no_data_try_different_approach"
+            }
+        
+        elif status == "comprehensive_data":
+            # Even with comprehensive data, do one more verification
+            return {
+                "action": "continue",
+                "new_focus": self._generate_verification_focus(question), 
+                "reason": "final_verification_check"
+            }
+        
+        else:
+            # Default: continue investigating
+            return {
+                "action": "continue",
+                "new_focus": self._generate_contextual_focus(question, iteration),
+                "reason": "continue_investigation"
+            }
+    
+    def _generate_deeper_focus(self, question: str) -> str:
+        """Generate focus for deeper investigation based on initial findings."""
+        if self.findings_history and len(self.findings_history[0]["data"]) > 0:
+            first_result = self.findings_history[0]["data"][0]
+            if isinstance(first_result, dict):
+                # Look at the data structure to decide what to explore
+                keys = list(first_result.keys())
+                if 'country' in keys:
+                    return "historical trends by country"
+                elif 'name' in keys:
+                    return "detailed performance analysis"
+                elif 'count' in str(keys).lower():
+                    return "distribution and patterns in the data"
+                else:
+                    return "relationships and context"
+        return "detailed breakdown and context"
+    
+    def _generate_validation_focus(self, question: str) -> str:
+        """Generate focus for validating patterns found."""
+        return "cross-reference and validate findings"
+    
+    def _generate_alternative_focus(self, question: str) -> str:
+        """Generate alternative focus when no data found."""
+        if "top" in question.lower() or "most" in question.lower():
+            return "alternative ranking approach"
+        elif "count" in question.lower():
+            return "basic counting and aggregation"
+        else:
+            return "fundamental data exploration"
+    
+    def _generate_verification_focus(self, question: str) -> str:
+        """Generate focus for final verification."""
+        return "verify and cross-check results"
+    
+    def _generate_contextual_focus(self, question: str, iteration: int) -> str:
+        """Generate contextual focus based on iteration and question."""
+        focuses = [
+            "statistical summary",
+            "historical context", 
+            "comparative analysis",
+            "trend validation",
+            "final verification"
+        ]
+        return focuses[min(iteration, len(focuses) - 1)]
+    
+    def _extract_tables_from_schema(self, schema: str) -> List[str]:
+        """Extract table names from schema description."""
+        import re
+        
+        # Pattern to match table definitions in schema
+        # Handles formats like: "- tablename(" or "tablename(" or "table: tablename"
+        table_patterns = [
+            r'- ([a-zA-Z_][a-zA-Z0-9_]*)\(',  # - table_name(
+            r'^([a-zA-Z_][a-zA-Z0-9_]*)\(',   # table_name(
+            r'table[:\s]+([a-zA-Z_][a-zA-Z0-9_]*)',  # table: table_name
+            r'CREATE TABLE ["`]?([a-zA-Z_][a-zA-Z0-9_]*)["`]?',  # CREATE TABLE table_name
+        ]
+        
+        tables = set()
+        for pattern in table_patterns:
+            matches = re.findall(pattern, schema, re.IGNORECASE | re.MULTILINE)
+            tables.update(matches)
+        
+        # Remove common SQL keywords that might be caught
+        sql_keywords = {'SELECT', 'FROM', 'WHERE', 'GROUP', 'ORDER', 'HAVING', 'UNION', 'JOIN'}
+        tables = [t for t in tables if t.upper() not in sql_keywords]
+        
+        return list(tables)[:10]  # Limit to first 10 tables
+    
+    def _extract_likely_columns_from_schema(self, schema: str, table_name: str) -> List[str]:
+        """Extract likely column names for a specific table from schema."""
+        import re
+        
+        # Find the table definition in schema
+        table_pattern = rf'- {re.escape(table_name)}\((.*?)\)'
+        match = re.search(table_pattern, schema, re.DOTALL)
+        
+        if not match:
+            # Try alternative patterns
+            alt_patterns = [
+                rf'{re.escape(table_name)}\((.*?)\)',
+                rf'CREATE TABLE ["`]?{re.escape(table_name)}["`]?\s*\((.*?)\)'
+            ]
+            for pattern in alt_patterns:
+                match = re.search(pattern, schema, re.DOTALL | re.IGNORECASE)
+                if match:
+                    break
+        
+        if not match:
+            return []
+        
+        columns_text = match.group(1)
+        
+        # Extract column names (handle various formats)
+        column_patterns = [
+            r'([a-zA-Z_][a-zA-Z0-9_]*)\s+(?:INTEGER|TEXT|REAL|BLOB|NULL)',  # column_name TYPE
+            r'([a-zA-Z_][a-zA-Z0-9_]*)\s*,',  # column_name,
+            r'([a-zA-Z_][a-zA-Z0-9_]*)\s+[A-Z]',  # column_name TYPE
+        ]
+        
+        columns = set()
+        for pattern in column_patterns:
+            matches = re.findall(pattern, columns_text, re.IGNORECASE)
+            columns.update(matches)
+        
+        # Common useful column types to look for
+        common_columns = []
+        columns_list = list(columns)
+        
+        # Prioritize common patterns
+        priority_patterns = ['id', 'name', 'title', 'country', 'date', 'year', 'count', 'total', 'amount']
+        for pattern in priority_patterns:
+            matching_cols = [col for col in columns_list if pattern.lower() in col.lower()]
+            common_columns.extend(matching_cols)
+        
+        # Add remaining columns
+        remaining = [col for col in columns_list if col not in common_columns]
+        common_columns.extend(remaining)
+        
+        return common_columns[:8]  # Limit to 8 most relevant columns
+    
+    def _generate_schema_aware_fallback(self, question: str, focus: str, iteration: int, schema: str) -> str:
+        """Generate a completely database-agnostic fallback query."""
+        # Extract available tables from schema
+        tables = self._extract_tables_from_schema(schema)
+        
+        if not tables:
+            return "SELECT 1 as no_tables_found"  # Fallback for schema parsing failure
+        
+        # Pick most relevant table based on question content
+        primary_table = self._select_relevant_table(question, tables)
+        
+        # Extract columns for this table
+        columns = self._extract_likely_columns_from_schema(schema, primary_table)
+        
+        print(f"[AGENTIC] Schema-aware fallback: table={primary_table}, columns={columns[:3]}")
+        
+        # Generate appropriate query based on question type and iteration
+        if ("top" in question.lower() or "most" in question.lower()) and iteration == 0:
+            # First iteration: explore the data structure
+            return f"SELECT * FROM {primary_table} LIMIT 5"
+        
+        elif ("top" in question.lower() or "most" in question.lower()) and len(columns) > 1:
+            # Ranking query: try to find a groupable column and countable metric
+            group_col = self._find_groupable_column(columns)
+            if group_col:
+                return f"SELECT {group_col}, COUNT(*) as count FROM {primary_table} GROUP BY {group_col} ORDER BY count DESC LIMIT 10"
             else:
-                return {
-                    "action": "pivot",
-                    "pivot_focus": "basic dataset overview",
-                    "reason": "pivot_to_overview"
-                }
+                return f"SELECT {columns[0]}, COUNT(*) as count FROM {primary_table} GROUP BY {columns[0]} ORDER BY count DESC LIMIT 10"
         
-        if status == "need_more_data":
-            # Continue investigation with refined focus
-            if "driver" in question.lower():
-                return {
-                    "action": "continue",
-                    "new_focus": "driver performance details",
-                    "reason": "need_driver_details"
-                }
+        elif "count" in question.lower():
+            return f"SELECT COUNT(*) as total_count FROM {primary_table}"
+        
+        else:
+            # Generic exploration based on iteration
+            if iteration == 0:
+                return f"SELECT * FROM {primary_table} LIMIT 5"
+            elif iteration == 1:
+                return f"SELECT COUNT(*) as record_count FROM {primary_table}"
+            elif len(columns) > 0:
+                # Try to get distinct values from first meaningful column
+                col = self._find_groupable_column(columns) or columns[0]
+                return f"SELECT DISTINCT {col} FROM {primary_table} LIMIT 20"
             else:
-                return {
-                    "action": "continue", 
-                    "new_focus": "detailed analysis",
-                    "reason": "need_more_context"
-                }
+                return f"SELECT * FROM {primary_table} LIMIT 3"
+    
+    def _select_relevant_table(self, question: str, tables: List[str]) -> str:
+        """Select the most relevant table based on question content."""
+        question_lower = question.lower()
         
-        return {"action": "complete", "reason": "default_completion"}
+        # Look for table names mentioned in the question
+        for table in tables:
+            if table.lower() in question_lower:
+                return table
+        
+        # Look for common entity patterns
+        entity_patterns = {
+            'country': ['location', 'place', 'circuit', 'venue', 'geography'],
+            'user': ['customer', 'person', 'people', 'individual'],
+            'product': ['item', 'good', 'merchandise'],
+            'order': ['purchase', 'transaction', 'sale'],
+            'event': ['race', 'game', 'match', 'contest'],
+            'performance': ['result', 'score', 'time', 'speed']
+        }
+        
+        for table in tables:
+            table_lower = table.lower()
+            for entity_type, keywords in entity_patterns.items():
+                if entity_type in table_lower or any(keyword in table_lower for keyword in keywords):
+                    return table
+        
+        # Default to first table
+        return tables[0]
+    
+    def _find_groupable_column(self, columns: List[str]) -> Optional[str]:
+        """Find a column suitable for grouping (categorical data)."""
+        # Prioritize common groupable column patterns
+        groupable_patterns = ['country', 'name', 'type', 'category', 'status', 'region', 'city', 'state']
+        
+        for pattern in groupable_patterns:
+            for col in columns:
+                if pattern.lower() in col.lower():
+                    return col
+        
+        # Look for columns that end with common categorical suffixes
+        categorical_suffixes = ['_type', '_status', '_category', '_name', '_code']
+        for col in columns:
+            if any(col.lower().endswith(suffix) for suffix in categorical_suffixes):
+                return col
+        
+        # Avoid numeric/id columns for grouping
+        avoid_patterns = ['id', 'count', 'total', 'amount', 'price', 'cost', 'number', 'quantity']
+        for col in columns:
+            if not any(pattern in col.lower() for pattern in avoid_patterns):
+                return col
+        
+        return None
     
     def _synthesize_final_answer(self, question: str, hypothesis: Dict) -> str:
         """Synthesize final answer from all findings."""
