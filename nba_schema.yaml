@@ -1,0 +1,1770 @@
+tables:
+  common_player_info:
+    description: ''
+    columns:
+    - name: person_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: first_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: last_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: display_first_last
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: display_last_comma_first
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: display_fi_last
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player_slug
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: birthdate
+      type: TIMESTAMP
+      nullable: true
+      primary_key: false
+      default: null
+    - name: school
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: country
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: last_affiliation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: height
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: weight
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: season_exp
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: jersey
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: rosterstatus
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: games_played_current_season_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_code
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: playercode
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: from_year
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: to_year
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: dleague_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: nba_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: games_played_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: draft_year
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: draft_round
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: draft_number
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: greatest_75_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  draft_combine_stats:
+    description: ''
+    columns:
+    - name: season
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: first_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: last_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: position
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: height_wo_shoes
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: height_wo_shoes_ft_in
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: height_w_shoes
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: height_w_shoes_ft_in
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: weight
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wingspan
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wingspan_ft_in
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: standing_reach
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: standing_reach_ft_in
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: body_fat_pct
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: hand_length
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: hand_width
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: standing_vertical_leap
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: max_vertical_leap
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lane_agility_time
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: modified_lane_agility_time
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: three_quarter_sprint
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: bench_press
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_fifteen_corner_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_fifteen_break_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_fifteen_top_key
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_fifteen_break_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_fifteen_corner_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_college_corner_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_college_break_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_college_top_key
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_college_break_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_college_corner_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_nba_corner_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_nba_break_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_nba_top_key
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_nba_break_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: spot_nba_corner_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: off_drib_fifteen_break_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: off_drib_fifteen_top_key
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: off_drib_fifteen_break_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: off_drib_college_break_left
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: off_drib_college_top_key
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: off_drib_college_break_right
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: on_move_fifteen
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: on_move_college
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  draft_history:
+    description: ''
+    columns:
+    - name: person_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: season
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: round_number
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: round_pick
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: overall_pick
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: draft_type
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: organization
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: organization_type
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player_profile_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  game:
+    description: ''
+    columns:
+    - name: season_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_name_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_date
+      type: TIMESTAMP
+      nullable: true
+      primary_key: false
+      default: null
+    - name: matchup_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wl_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: min
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fgm_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fga_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg_pct_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg3m_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg3a_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg3_pct_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ftm_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fta_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ft_pct_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: oreb_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: dreb_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: reb_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ast_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: stl_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: blk_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: tov_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pf_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: plus_minus_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: video_available_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_name_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: matchup_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wl_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fgm_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fga_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg_pct_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg3m_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg3a_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fg3_pct_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ftm_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: fta_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ft_pct_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: oreb_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: dreb_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: reb_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ast_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: stl_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: blk_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: tov_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pf_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: plus_minus_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: video_available_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: season_type
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  game_info:
+    description: ''
+    columns:
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_date
+      type: TIMESTAMP
+      nullable: true
+      primary_key: false
+      default: null
+    - name: attendance
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  game_summary:
+    description: ''
+    columns:
+    - name: game_date_est
+      type: TIMESTAMP
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_sequence
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_status_id
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_status_text
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: gamecode
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: home_team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: visitor_team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: season
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: live_period
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: live_pc_time
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: natl_tv_broadcaster_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: live_period_time_bcast
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wh_status
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  inactive_players:
+    description: ''
+    columns:
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: first_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: last_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: jersey_num
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  line_score:
+    description: ''
+    columns:
+    - name: game_date_est
+      type: TIMESTAMP
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_sequence
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city_name_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_nickname_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_wins_losses_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr1_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr2_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr3_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr4_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot1_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot2_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot3_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot4_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot5_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot6_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot7_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot8_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot9_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot10_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_home
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city_name_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_nickname_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_wins_losses_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr1_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr2_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr3_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_qtr4_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot1_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot2_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot3_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot4_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot5_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot6_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot7_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot8_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot9_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_ot10_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_away
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  officials:
+    description: ''
+    columns:
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: official_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: first_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: last_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: jersey_num
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  other_stats:
+    description: ''
+    columns:
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: league_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city_home
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_paint_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_2nd_chance_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_fb_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: largest_lead_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: lead_changes
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: times_tied
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_turnovers_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: total_turnovers_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_rebounds_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_off_to_home
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_id_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city_away
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_paint_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_2nd_chance_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_fb_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: largest_lead_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_turnovers_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: total_turnovers_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_rebounds_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_off_to_away
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  play_by_play:
+    description: ''
+    columns:
+    - name: game_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: eventnum
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: eventmsgtype
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: eventmsgactiontype
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: period
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: wctimestring
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pctimestring
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: homedescription
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: neutraldescription
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: visitordescription
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: score
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: scoremargin
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: person1type
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player1_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player1_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player1_team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player1_team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player1_team_nickname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player1_team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: person2type
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player2_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player2_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player2_team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player2_team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player2_team_nickname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player2_team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: person3type
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player3_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player3_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player3_team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player3_team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player3_team_nickname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: player3_team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: video_available_flag
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  player:
+    description: ''
+    columns:
+    - name: id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: full_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: first_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: last_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: is_active
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  team:
+    description: ''
+    columns:
+    - name: id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: full_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: nickname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: state
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: year_founded
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  team_details:
+    description: ''
+    columns:
+    - name: team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: nickname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: yearfounded
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: arena
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: arenacapacity
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: owner
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: generalmanager
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: headcoach
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: dleagueaffiliation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: facebook
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: instagram
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: twitter
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  team_history:
+    description: ''
+    columns:
+    - name: team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: nickname
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: year_founded
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: year_active_till
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []
+  team_info_common:
+    description: ''
+    columns:
+    - name: team_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: season_year
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_city
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_name
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_abbreviation
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_conference
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_division
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_code
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: team_slug
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: w
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: l
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pct
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: conf_rank
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: div_rank
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: min_year
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: max_year
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: league_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: season_id
+      type: TEXT
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_rank
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: pts_pg
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: reb_rank
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: reb_pg
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ast_rank
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: ast_pg
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    - name: opp_pts_rank
+      type: INTEGER
+      nullable: true
+      primary_key: false
+      default: null
+    - name: opp_pts_pg
+      type: REAL
+      nullable: true
+      primary_key: false
+      default: null
+    foreign_keys: []

@@ -211,8 +211,12 @@ Simple timeout on LLM call; result size caps for CSV
 
 ### Config / Env
 
-SLACK_BOT_TOKEN (required): bot token with chat:write, chat:write.public, files:write, commands
+**Required:**
+- SLACK_BOT_TOKEN: bot token with chat:write, chat:write.public, files:write, commands
 
-OLLAMA_MODEL: e.g. qwen3:4b
-
-SQLITE_PATH: path to your DB, default ./chinook.db
+**Optional:**
+- OLLAMA_MODEL: e.g. qwen3:4b
+- SQLITE_PATH: path to your DB, default ./chinook.db
+- **QUERY_LIMIT**: Row limit for `/dd` commands (default: 500)
+  - Set to `0` or negative value to disable limit entirely
+  - Example: `QUERY_LIMIT=1000` or `QUERY_LIMIT=0` for unlimited

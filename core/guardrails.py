@@ -73,15 +73,17 @@ def sanitize_sql(sql: str, default_limit: int = 500) -> Tuple[bool, str, str]:
             logger.warning(f"Suspicious pattern found: {pattern} in query: {s[:100]}...")
             return False, "", "suspicious_pattern"
 
-    # Add LIMIT if not present
+    # Add LIMIT if not present (unless limit is disabled)
     if not re.search(r"\bLIMIT\b\s+\d+", s, flags=re.IGNORECASE):
-        s = f"{s} LIMIT {default_limit}"
+        if default_limit > 0:  # Only add limit if not disabled
+            s = f"{s} LIMIT {default_limit}"
     else:
-        # Check if existing limit is reasonable
-        limit_match = re.search(r"\bLIMIT\b\s+(\d+)", s, flags=re.IGNORECASE)
-        if limit_match and int(limit_match.group(1)) > 10000:
-            logger.warning(f"Excessive LIMIT value: {limit_match.group(1)}")
-            return False, "", "excessive_limit"
+        # Check if existing limit is reasonable (unless limit checking is disabled)
+        if default_limit > 0:  # Only enforce limit checks if not disabled
+            limit_match = re.search(r"\bLIMIT\b\s+(\d+)", s, flags=re.IGNORECASE)
+            if limit_match and int(limit_match.group(1)) > 10000:
+                logger.warning(f"Excessive LIMIT value: {limit_match.group(1)}")
+                return False, "", "excessive_limit"
 
     logger.info(f"SQL query sanitized successfully: {s[:100]}...")
     return True, s, ""

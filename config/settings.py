@@ -32,7 +32,9 @@ class Config:
     # Application Configuration
     EXPORTS_DIR = "./exports"
     ROWS_PER_PAGE = 12
-    DEFAULT_LIMIT = 500
+    # Allow overriding default query limit via environment variable
+    # Set to 0 or negative value to disable limit entirely
+    DEFAULT_LIMIT = int(os.getenv("QUERY_LIMIT", "500"))
     LLM_TIMEOUT = 120
     
     # Optional Configuration
